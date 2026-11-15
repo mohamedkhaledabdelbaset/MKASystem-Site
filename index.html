@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MKA System — Paint & Hardware Store Management Suite</title>
+<meta name="description" content="MKA System is a professional POS & inventory management suite for paint, hardware and building-material stores: invoicing, color mixing, warehouses, debts, reports and more.">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{
+  --bg:#070b16; --bg2:#0b1226; --card:rgba(255,255,255,.045); --card2:rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.09); --text:#e8edf7; --muted:#9aa7c2;
+  --brand:#DC2626; --brand2:#F97316; --gold:#A88C67;
+  --grad:linear-gradient(135deg,#DC2626 0%,#F97316 100%);
+  --radius:18px;
+}
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:"Segoe UI",system-ui,Tahoma,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(220,38,38,.16), transparent 60%),
+    radial-gradient(1000px 600px at -10% 20%, rgba(249,115,22,.10), transparent 55%),
+    linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+  color:var(--text); min-height:100vh; overflow-x:hidden;
+}
+::selection{ background:rgba(249,115,22,.35); }
+a{ color:inherit; text-decoration:none; }
+.wrap{ max-width:1150px; margin:0 auto; padding:0 22px; }
+
+/* ===== Header ===== */
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(7,11,22,.72); backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.nav{ display:flex; align-items:center; gap:18px; height:64px; }
+.brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:17px; }
+.brand .logo{ width:36px; height:36px; border-radius:50%; background:#fff; display:grid; place-items:center;
+  box-shadow:0 4px 18px rgba(220,38,38,.45); overflow:hidden; }
+.brand .logo img{ width:100%; height:100%; object-fit:cover; }
+.brand em{ font-style:normal; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.nav .links{ display:flex; gap:22px; margin-inline-start:auto; font-size:14px; color:var(--muted); }
+.nav .links a:hover{ color:var(--text); }
+.nav .cta{ margin-inline-start:8px; }
+.lang-btn{
+  border:1px solid var(--line); background:transparent; color:var(--muted);
+  padding:7px 14px; border-radius:999px; cursor:pointer; font-size:13px; font-weight:600;
+}
+.lang-btn:hover{ color:var(--text); border-color:rgba(255,255,255,.25); }
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 20px; border-radius:12px; font-weight:700; font-size:14px; cursor:pointer;
+  border:none; transition:transform .12s ease, box-shadow .12s ease, filter .12s;
+}
+.btn-primary{ background:var(--grad); color:#fff; box-shadow:0 10px 26px rgba(220,38,38,.35); }
+.btn-primary:hover{ transform:translateY(-1px); filter:brightness(1.06); }
+.btn-ghost{ background:var(--card2); color:var(--text); border:1px solid var(--line); }
+.btn-ghost:hover{ background:rgba(255,255,255,.12); }
+.menu-toggle{ display:none; margin-inline-start:auto; background:none; border:none; color:var(--text); font-size:22px; cursor:pointer; }
+
+/* ===== Hero ===== */
+.hero{ position:relative; padding:76px 0 40px; text-align:center; }
+.hero .pill{
+  display:inline-flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted);
+  border:1px solid var(--line); background:var(--card); padding:7px 16px; border-radius:999px; margin-bottom:22px;
+}
+.hero .pill b{ color:#fdba74; font-weight:700; }
+.hero h1{ font-size:clamp(30px,5.4vw,52px); line-height:1.15; font-weight:800; letter-spacing:-.5px; }
+.hero h1 span{ background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero p.sub{ color:var(--muted); font-size:clamp(14px,2.2vw,17.5px); max-width:640px; margin:18px auto 0; line-height:1.75; }
+.hero .actions{ display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap; }
+.hero .stats{ display:flex; gap:34px; justify-content:center; margin-top:44px; flex-wrap:wrap; }
+.stat b{ font-size:24px; display:block; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stat span{ font-size:12.5px; color:var(--muted); }
+
+/* ===== Sections ===== */
+section{ padding:64px 0; }
+.sec-head{ text-align:center; margin-bottom:42px; }
+.sec-head h2{ font-size:clamp(24px,3.6vw,34px); font-weight:800; }
+.sec-head h2 span{ background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.sec-head p{ color:var(--muted); margin-top:10px; font-size:15px; }
+
+/* Features */
+.grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; }
+.feat{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 22px; transition:transform .18s ease, border-color .18s;
+}
+.feat:hover{ transform:translateY(-4px); border-color:rgba(249,115,22,.35); }
+.feat .ic{
+  width:44px; height:44px; border-radius:12px; display:grid; place-items:center; margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(220,38,38,.2),rgba(249,115,22,.2)); border:1px solid rgba(249,115,22,.25);
+  font-size:21px;
+}
+.feat h3{ font-size:15.5px; margin-bottom:8px; }
+.feat p{ color:var(--muted); font-size:13.5px; line-height:1.7; }
+
+/* Modules screenshots */
+.shots{ display:grid; grid-template-columns:repeat(auto-fit,minmax(420px,1fr)); gap:20px; }
+.shot{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  transition:transform .2s ease, border-color .2s;
+}
+.shot:hover{ transform:translateY(-5px); border-color:rgba(249,115,22,.4); }
+.shot img{ width:100%; display:block; aspect-ratio:1300/820; object-fit:cover; object-position:top left; }
+.shot .cap{ padding:14px 16px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); }
+.shot .cap b{ color:var(--text); display:block; margin-bottom:3px; font-size:13.5px; }
+
+/* Pricing */
+.plans{ display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:18px; align-items:stretch; }
+.plan{
+  position:relative; background:var(--card); border:1px solid var(--line); border-radius:22px;
+  padding:30px 26px; display:flex; flex-direction:column; gap:16px;
+}
+.plan.pop{ border-color:rgba(249,115,22,.45); background:linear-gradient(180deg,rgba(249,115,22,.08),rgba(220,38,38,.05)); box-shadow:0 18px 50px rgba(220,38,38,.18); }
+.plan .tag{ position:absolute; top:-13px; inset-inline-start:50%; transform:translateX(-50%);
+  background:var(--grad); color:#fff; font-size:11.5px; font-weight:800; padding:5px 14px; border-radius:999px; letter-spacing:.4px; }
+html[dir="rtl"] .plan .tag{ transform:translateX(50%); }
+.plan h3{ font-size:16px; }
+.plan .price{ font-size:38px; font-weight:800; letter-spacing:-1px; }
+.plan .price small{ font-size:14px; color:var(--muted); font-weight:600; letter-spacing:0; }
+.plan ul{ list-style:none; display:flex; flex-direction:column; gap:9px; font-size:13.5px; color:var(--muted); flex:1; }
+.plan ul li{ display:flex; gap:9px; align-items:flex-start; line-height:1.5; }
+.plan ul li::before{ content:"✓"; color:#34d399; font-weight:800; flex-shrink:0; }
+.plan .btn{ width:100%; }
+.currency{ display:inline-flex; gap:6px; background:var(--card2); border:1px solid var(--line); border-radius:999px; padding:4px; margin-top:18px; }
+.currency button{ border:none; background:transparent; color:var(--muted); font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:999px; cursor:pointer; }
+.currency button.on{ background:var(--grad); color:#fff; }
+
+/* FAQ */
+.faq{ max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
+.q{ background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+.q button{ width:100%; text-align:start; background:none; border:none; color:var(--text); font-size:14.5px; font-weight:600; padding:16px 18px; cursor:pointer; display:flex; justify-content:space-between; gap:12px; }
+.q .a{ display:none; padding:0 18px 16px; color:var(--muted); font-size:13.5px; line-height:1.75; }
+.q.open .a{ display:block; }
+.q .chev{ transition:transform .2s; color:var(--muted); }
+.q.open .chev{ transform:rotate(180deg); }
+
+/* Checkout modal */
+.overlay{ position:fixed; inset:0; background:rgba(4,7,14,.72); backdrop-filter:blur(8px); z-index:90;
+  display:none; align-items:center; justify-content:center; padding:18px; }
+.overlay.show{ display:flex; }
+.modal{ width:100%; max-width:470px; background:var(--bg2); border:1px solid var(--line); border-radius:22px; padding:26px; box-shadow:0 30px 80px rgba(0,0,0,.5); max-height:92vh; overflow:auto; }
+.modal h3{ font-size:19px; margin-bottom:6px; }
+.modal .m-sub{ color:var(--muted); font-size:13.5px; margin-bottom:18px; line-height:1.6; }
+.modal label{ display:block; font-size:13px; font-weight:700; margin:12px 0 6px; }
+.modal input, .modal select{
+  width:100%; padding:11px 13px; font-size:14.5px; border-radius:10px; border:1px solid var(--line);
+  background:rgba(255,255,255,.06); color:var(--text); outline:none;
+}
+.modal input:focus, .modal select:focus{ border-color:#f97316; box-shadow:0 0 0 3px rgba(249,115,22,.18); }
+.modal .order-sum{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 15px; margin:16px 0; display:flex; justify-content:space-between; align-items:center; font-size:14px; }
+.modal .order-sum b{ font-size:17px; }
+.modal .steps{ margin-top:16px; border-top:1px solid var(--line); padding-top:14px; font-size:12.5px; color:var(--muted); line-height:1.8; }
+.modal .close{ position:absolute; top:14px; inset-inline-end:16px; background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
+.modal{ position:relative; }
+
+/* License delivered */
+.lic-box{ display:none; text-align:center; }
+.lic-box.show{ display:block; }
+.lic-key{
+  font-family:ui-monospace,Consolas,monospace; font-size:15px; letter-spacing:.5px; word-break:break-all;
+  background:#16090a; color:#fdba74; border:1px solid rgba(249,115,22,.35); border-radius:12px; padding:14px; margin:14px 0;
+}
+.note{ font-size:12px; color:var(--muted); line-height:1.7; }
+
+/* Footer */
+footer{ border-top:1px solid var(--line); margin-top:40px; padding:34px 0 44px; }
+.foot{ display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-content:space-between; color:var(--muted); font-size:13px; }
+.foot .brand{ font-size:15px; }
+.foot a:hover{ color:var(--text); }
+
+/* Reveal animation */
+.reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in{ opacity:1; transform:none; }
+
+@media (max-width:760px){
+  .nav .links{ display:none; position:absolute; top:64px; inset-inline:0; flex-direction:column;
+    background:rgba(7,11,22,.97); border-bottom:1px solid var(--line); padding:18px 22px; gap:14px; }
+  .nav .links.open{ display:flex; }
+  .menu-toggle{ display:block; }
+  .nav .cta{ display:none; }
+  .hero{ padding-top:52px; }
+  section{ padding:48px 0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <span class="logo"><img src="icons/icon-192.png" alt="MKA"></span>
+      <span>MKA <em>System</em></span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+    <nav class="links" id="navLinks">
+      <a href="#features" data-i18n="nav_features">Features</a>
+      <a href="#modules" data-i18n="nav_modules">Modules</a>
+      <a href="#pricing" data-i18n="nav_pricing">Pricing</a>
+      <a href="#faq" data-i18n="nav_faq">FAQ</a>
+      <a href="#contact" data-i18n="nav_contact">Contact</a>
+    </nav>
+    <button class="lang-btn" id="langBtn">العربية</button>
+    <a href="#pricing" class="btn btn-primary cta" data-i18n="nav_buy">Buy Now</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="wrap">
+    <div class="pill">🔥 <span data-i18n="hero_pill">Trusted by paint & hardware stores</span> <b>v2</b></div>
+    <h1 data-i18n-html="hero_h1">Run your store like a <span>pro</span></h1>
+    <p class="sub" data-i18n="hero_sub">MKA System is a complete desktop suite for paint, hardware and building-material shops — fast POS, smart inventory, color mixing & cataloging, multi-warehouse, debts, advances, invoices and powerful reports.</p>
+    <div class="actions">
+      <a href="#pricing" class="btn btn-primary" data-i18n="hero_cta1">Get your license</a>
+      <a href="downloads/MKASystem.exe" download class="btn btn-ghost" id="heroDl" data-i18n="download">⬇ Download EXE</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>18+</b><span data-i18n="stat1">Integrated modules</span></div>
+      <div class="stat"><b>2</b><span data-i18n="stat2">Languages (AR/EN)</span></div>
+      <div class="stat"><b>4</b><span data-i18n="stat3">UI themes</span></div>
+      <div class="stat"><b>∞</b><span data-i18n="stat4">Invoices & items</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-i18n-html="feat_h2">Everything your <span>store</span> needs</h2>
+      <p data-i18n="feat_sub">Built for the daily reality of paint & hardware retailers — offline-first, fast and reliable.</p>
+    </div>
+    <div class="grid" id="featGrid"></div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modules">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-i18n-html="mod_h2">Inside the <span>system</span></h2>
+      <p data-i18n="mod_sub">A glimpse of the clean, glassy interface — four themes, Arabic & English.</p>
+    </div>
+    <div class="shots" id="shotsGrid"></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-i18n-html="price_h2">Simple <span>subscription</span>, instant activation</h2>
+      <p data-i18n="price_sub">One full edition — pick a duration and pay once. Free EXE download below.</p>
+      <div class="currency" id="currencyBar">
+        <button data-cur="USD" class="on">USD $</button>
+        <button data-cur="EGP">EGP ج.م</button>
+        <button data-cur="SAR">SAR ر.س</button>
+        <button data-cur="AED">AED د.إ</button>
+      </div>
+    </div>
+    <div class="plans" id="plansGrid"></div>
+    <div id="downloadArea" style="display:flex;gap:14px;align-items:center;justify-content:center;margin-top:34px;flex-wrap:wrap"></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-i18n-html="faq_h2">Questions & <span>answers</span></h2>
+    </div>
+    <div class="faq" id="faqList"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap sec-head reveal">
+    <h2 data-i18n-html="contact_h2">Talk to <span>us</span></h2>
+    <p data-i18n="contact_sub">Questions before buying? We reply fast.</p>
+    <div class="actions" style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="mailto:mohamedkhaledabdelbaset@gmail.com" data-i18n="contact_mail">✉ Email us</a>
+      <a class="btn btn-ghost" href="https://wa.me/201012345678" target="_blank" rel="noopener" data-i18n="contact_wa">💬 WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#top"><span class="logo"><img src="icons/icon-192.png" alt="MKA"></span><span>MKA <em>System</em></span></a>
+    <div>© 2026 MKA System — <span data-i18n="foot_rights">All rights reserved.</span></div>
+    <div><a href="#pricing" data-i18n="foot_pricing">Pricing</a> · <a href="#faq" data-i18n="foot_faq">FAQ</a> · <a href="mailto:mohamedkhaledabdelbaset@gmail.com">Support</a></div>
+  </div>
+</footer>
+
+<!-- CHECKOUT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="close" id="modalClose" aria-label="Close">✕</button>
+
+    <div id="checkoutForm">
+      <h3 data-i18n="checkout_h">Complete your order</h3>
+      <p class="m-sub" data-i18n="checkout_sub">Enter your details — your order is sent to us on WhatsApp and we reply with your activation key.</p>
+      <label data-i18n="co_name">Full name</label>
+      <input id="coName" type="text" autocomplete="name">
+      <label data-i18n="co_shop">Store / business name</label>
+      <input id="coShop" type="text" autocomplete="organization">
+      <label data-i18n="co_contact">WhatsApp number / Email</label>
+      <input id="coContact" type="text" autocomplete="email">
+      <div class="order-sum">
+        <span id="sumPlan">—</span>
+        <b id="sumPrice">$0</b>
+      </div>
+      <button class="btn btn-primary" style="width:100%" id="payBtn" data-i18n="co_send">📩 Send order via WhatsApp</button>
+      <div class="steps" data-i18n="co_steps">
+        1) Your order opens in WhatsApp with all details pre-filled — just press Send.<br>
+        2) We confirm and send you the activation key.<br>
+        3) Paste the key into the app's activation screen — done!
+      </div>
+    </div>
+
+    <div class="lic-box" id="licBox">
+      <h3 data-i18n="lic_h">✅ Order sent!</h3>
+      <p class="m-sub" data-i18n="lic_sub">We received your order on WhatsApp — we will reply shortly with your activation key.</p>
+      <div class="lic-key" id="licKey">—</div>
+      <button class="btn btn-primary" style="width:100%" id="waAgain" data-i18n="lic_wa_again">💬 Open WhatsApp again</button>
+      <a class="btn btn-ghost" style="width:100%;margin-top:10px" href="downloads/MKASystem.exe" download id="licDl" data-i18n="download">⬇ Download EXE</a>
+      <p class="note" style="margin-top:12px" data-i18n="lic_note">
+        Tip: download the app now and install it while you wait — once we send the key, open MKA System → Activation screen → paste it (leave device ID empty for first activation).
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ Config ============ */
+/* Prices are defined in EGP (Egyptian Pound) and converted to other currencies. */
+const BASE_CUR = "EGP";
+const RATES = { EGP:1, USD:1/47.5, SAR:3.75/47.5, AED:3.67/47.5 };
+const CUR_SYM = { EGP:"ج.م", USD:"$", SAR:"ر.س", AED:"د.إ" };
+/* Subscription plans — one single edition; duration is what changes. */
+const PLANS = [
+  { id:"m1", egp:300,  name:{en:"Monthly", ar:"شهري"},        per:{en:"month",     ar:"شهريًا"},      dur:{en:"1 month",   ar:"شهر واحد"},   pop:false },
+  { id:"m3", egp:800,  name:{en:"3 Months", ar:"٣ شهور"},     per:{en:"3 months",  ar:"لكل ٣ شهور"},  dur:{en:"3 months",  ar:"٣ شهور"},     pop:true,  tag:{en:"BEST VALUE", ar:"أفضل قيمة"} },
+  { id:"m6", egp:1600, name:{en:"6 Months", ar:"٦ شهور"},     per:{en:"6 months",  ar:"لكل ٦ شهور"},  dur:{en:"6 months",  ar:"٦ شهور"},     pop:false, tag:{en:"SAVE 11%",   ar:"وفّر ١١٪"} },
+  { id:"y1", egp:3000, name:{en:"Yearly",  ar:"سنوي"},        per:{en:"year",      ar:"سنويًا"},      dur:{en:"12 months", ar:"سنة كاملة"},  pop:false, tag:{en:"SAVE 17%",   ar:"وفّر ١٧٪"} },
+];
+const PLAN_FEATS = {
+  en:["Full system access — all modules","Free updates during the subscription","WhatsApp support","Activation on 1 device"],
+  ar:["وصول كامل للنظام — كل الوحدات","تحديثات مجانية طوال فترة الاشتراك","دعم واتساب","تفعيل على جهاز واحد"],
+};
+const OWNER_WA = "201016901337"; /* WhatsApp number that receives orders (international format, no +) */
+const EXE_URL = "downloads/MKASystem.exe";
+const FEATURES = [
+  {ic:"🛒", en:["Lightning-fast POS","Barcode scanning, held orders, F-keys, thermal 80mm receipts."], ar:["كاشير فائق السرعة","مسح باركود، طلبات معلقة، مفاتيح سريعة، إيصالات حرارية 80مم."]},
+  {ic:"📦", en:["Smart inventory","Categories, cost/price tracking, low-stock alerts, instant search."], ar:["مخزون ذكي","تصنيفات، متابعة تكلفة/سعر، تنبيهات نقص، بحث فوري."]},
+  {ic:"🎨", en:["Paint industry tools","Color catalog, color measures, color mixing recipes."], ar:["أدوات صناعة الدهانات","كتالوج ألوان، مقاييس ألوان، وصفات خلط."]},
+  {ic:"🏬", en:["Multi-warehouse","Move stock between warehouses, per-store tracking."], ar:["مخازن متعددة","نقل مخزون بين المخازن ومتابعة لكل محل."]},
+  {ic:"🧾", en:["Invoices & returns","Full sales history, returns & exchange with settlement."], ar:["فواتير ومرتجعات","سجل مبيعات كامل، مرتجعات واستبدال مع تسوية."]},
+  {ic:"📊", en:["Powerful reports","Sales, profits, expenses, debts, dashboard KPIs & charts."], ar:["تقارير قوية","مبيعات، أرباح، مصروفات، ديون، داشبورد ومؤشرات."]},
+  {ic:"👥", en:["Customers & suppliers","Balances, statements, advances tracking."], ar:["عملاء وموردون","أرصدة، كشوف حساب، متابعة سلف."]},
+  {ic:"🔐", en:["Roles & permissions","Owner, admin, cashier — page-level permissions."], ar:["أدوار وصلاحيات","مالك، مدير، كاشير — صلاحيات على مستوى الشاشات."]},
+];
+const FAQS = [
+  {en:["How does the subscription work?","Choose a duration (1, 3, 6 or 12 months) and pay once — you get an activation key valid for the whole period. The app itself is one single full edition; the subscription only controls how long it stays active."],
+   ar:["كيف يعمل الاشتراك؟","اختر المدة (شهر أو ٣ أو ٦ أو ١٢ شهرًا) وادفع مرة واحدة — يوصلك كود تفعيل صالح طوال المدة. البرنامج نفسه نسخة واحدة كاملة؛ الاشتراك يحدد فقط مدة بقاءه فعّالًا."]},
+  {en:["What do I get exactly?","One edition with everything: POS, inventory, color mixing, warehouses, invoices, reports — no feature is locked per plan."],
+   ar:["ماذا أحصل عليه بالضبط؟","نسخة واحدة بكل شيء: كاشير، مخزون، خلط ألوان، مخازن، فواتير، تقارير — لا توجد مميزات مقفلة حسب الخطة."]},
+  {en:["Can I download the program before paying?","Yes — the full installer EXE is available as a free download on this page. It runs in trial mode until you activate with a key."],
+   ar:["هل أقدر أنزّل البرنامج قبل الدفع؟","نعم — ملف التثبيت EXE الكامل متاح للتحميل المجاني من هذه الصفحة، ويعمل في وضع تجريبي حتى تفعّله بكود."]},
+  {en:["Does it work offline?","Yes — 100% offline desktop app (Windows). No internet needed for daily work."],
+   ar:["هل يعمل بدون إنترنت؟","نعم — برنامج ويندوز سطح مكتب يعمل 100% بدون إنترنت في العمل اليومي."]},
+  {en:["What happens when my subscription ends?","The app goes back to trial mode — your data is safe. Renew with a new key and continue exactly where you left off."],
+   ar:["ماذا يحدث عند انتهاء الاشتراك؟","يرجع البرنامج للوضع التجريبي — بياناتك محفوظة بأمان. جدّد بكود جديد وكمّل من نفس المكان."]},
+];
+
+/* ============ i18n ============ */
+const I18N = {
+  en:{
+    nav_features:"Features", nav_modules:"Modules", nav_pricing:"Pricing", nav_faq:"FAQ", nav_contact:"Contact", nav_buy:"Buy Now",
+    hero_pill:"Trusted by paint & hardware stores", hero_h1:"Run your store like a <span>pro</span>",
+    hero_sub:"MKA System is a complete desktop suite for paint, hardware and building-material shops — fast POS, smart inventory, color mixing & cataloging, multi-warehouse, debts, advances, invoices and powerful reports.",
+    hero_cta1:"Get your license", hero_cta2:"Explore modules",
+    stat1:"Integrated modules", stat2:"Languages (AR/EN)", stat3:"UI themes", stat4:"Invoices & items",
+    feat_h2:"Everything your <span>store</span> needs", feat_sub:"Built for the daily reality of paint & hardware retailers — offline-first, fast and reliable.",
+    mod_h2:"Inside the <span>system</span>", mod_sub:"A glimpse of the clean, glassy interface — four themes, Arabic & English.",
+    price_h2:"Simple <span>subscription</span>, instant activation", price_sub:"One full edition — pick a duration and pay once. Free EXE download below.",
+    faq_h2:"Questions & <span>answers</span>",
+    contact_h2:"Talk to <span>us</span>", contact_sub:"Questions before buying? We reply fast.",
+    contact_mail:"✉ Email us", contact_wa:"💬 WhatsApp",
+    foot_rights:"All rights reserved.", foot_pricing:"Pricing", foot_faq:"FAQ",
+    checkout_h:"Complete your order", checkout_sub:"Enter your details — your order is sent to us on WhatsApp and we reply with your activation key.",
+    co_name:"Full name", co_shop:"Store / business name", co_contact:"WhatsApp number / Email", co_send:"📩 Send order via WhatsApp",
+    co_steps:"1) Your order opens in WhatsApp with all details pre-filled — just press Send.<br>2) We confirm and send you the activation key.<br>3) Paste the key into the app's activation screen — done!",
+    lic_h:"✅ Order sent!", lic_sub:"We received your order on WhatsApp — we will reply shortly with your activation key.",
+    lic_wa_again:"💬 Open WhatsApp again",
+    lic_note:"Tip: download the app now and install it while you wait — once we send the key, open MKA System → Activation screen → paste it (leave device ID empty for first activation).",
+    download:"⬇ Download EXE", download_sub:"Free download — runs in trial mode until activated.",
+  },
+  ar:{
+    nav_features:"المميزات", nav_modules:"الوحدات", nav_pricing:"الأسعار", nav_faq:"الأسئلة", nav_contact:"تواصل", nav_buy:"اشترِ الآن",
+    hero_pill:"موثوق لدى محلات الدهانات والعدد", hero_h1:"أدر محلك <span>باحتراف</span>",
+    hero_sub:"نظام MKA حزمة سطح مكتب متكاملة لمحلات الدهانات والعدد ومواد البناء — كاشير سريع، مخزون ذكي، خلط وكتالوج ألوان، مخازن متعددة، ديون وسلف، فواتير وتقارير قوية.",
+    hero_cta1:"احصل على رخصتك", hero_cta2:"استكشف الوحدات",
+    stat1:"وحدة متكاملة", stat2:"لغتان (عربي/إنجليزي)", stat3:"ثيمات واجهة", stat4:"فواتير وأصناف",
+    feat_h2:"كل ما يحتاجه <span>محلك</span>", feat_sub:"مصمّم لواقع العمل اليومي في محلات الدهانات والعدد — يعمل أوفلاين، سريع وموثوق.",
+    mod_h2:"داخل <span>النظام</span>", mod_sub:"لمحة من الواجهة الأنيقة الزجاجية — أربعة ثيمات، عربي وإنجليزي.",
+    price_h2:"اشتراك <span>بسيط</span>، تفعيل فوري", price_sub:"نسخة واحدة كاملة — اختر المدة وادفع مرة واحدة. تحميل EXE مجاني بالأسفل.",
+    faq_h2:"أسئلة <span>وأجوبة</span>",
+    contact_h2:"تواصل <span>معنا</span>", contact_sub:"عندك سؤال قبل الشراء؟ نرد سريعًا.",
+    contact_mail:"✉ راسلنا", contact_wa:"💬 واتساب",
+    foot_rights:"جميع الحقوق محفوظة.", foot_pricing:"الأسعار", foot_faq:"الأسئلة",
+    checkout_h:"أكمل طلبك", checkout_sub:"أدخل بياناتك — طلبك يتبعت لنا على واتساب ونرد عليك بكود التفعيل.",
+    co_name:"الاسم الكامل", co_shop:"اسم المحل / النشاط", co_contact:"رقم واتساب / بريد إلكتروني", co_send:"📩 إرسال الطلب على واتساب",
+    co_steps:"1) طلبك هيفتح في واتساب بالبيانات جاهزة — اضغط إرسال فقط.<br>2) هنأكد لك ونرد بكود التفعيل.<br>3) الصق الكود في شاشة التفعيل داخل البرنامج — خلاص!",
+    lic_h:"✅ تم إرسال طلبك!", lic_sub:"وصلنا طلبك على واتساب — هنرد عليك قريب بكود التفعيل.",
+    lic_wa_again:"💬 فتح واتساب مرة أخرى",
+    lic_note:"نصيحة: نزّل البرنامج الآن وثبّته وانت مستني — أول ما نبعتلك الكود افتح MKA System ← شاشة التفعيل ← الصقه (اترك معرّف الجهاز فارغًا في التفعيل الأول).",
+    download:"⬇ تحميل EXE", download_sub:"تحميل مجاني — يعمل في وضع تجريبي حتى التفعيل.",
+  }
+};
+let LANG = localStorage.getItem("mka_lang") || "en";
+let CUR  = localStorage.getItem("mka_cur") || "EGP";
+
+const t = k => (I18N[LANG][k] ?? I18N.en[k] ?? k);
+
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
+  document.getElementById("langBtn").textContent = LANG === "ar" ? "English" : "العربية";
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-html]").forEach(el => el.innerHTML = t(el.dataset.i18nHtml));
+  renderFeatures(); renderMocks(); renderPlans(); renderFaqs();
+  localStorage.setItem("mka_lang", LANG);
+}
+
+/* ============ Renderers ============ */
+function renderFeatures(){
+  document.getElementById("featGrid").innerHTML = FEATURES.map(f => {
+    const [title, desc] = LANG === "ar" ? f.ar : f.en;
+    return `<div class="feat reveal"><div class="ic">${f.ic}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  }).join("");
+  observeReveals();
+}
+function renderMocks(){
+  const S = [
+    {img:"assets/page_00_pos.png",       cap:{en:["POS — Checkout","Barcode scanning, cart, discounts and fast payment."],ar:["الكاشير — الدفع","مسح باركود، السلة، الخصومات، ودفع سريع."]}},
+    {img:"assets/page_01_inventory.png", cap:{en:["Inventory — Products","Full control over items, cost, price and stock."],ar:["المخزون — المنتجات","تحكم كامل بالأصناف والتكلفة والسعر والرصيد."]}},
+    {img:"assets/page_02_reports.png",   cap:{en:["Reports","Sales, profits and margins in clear views."],ar:["التقارير","مبيعات وأرباح ونسب ربح في مناظير واضحة."]}},
+    {img:"assets/page_17_dashboard.png", cap:{en:["Dashboard — KPIs","Live KPIs, charts and top sellers."],ar:["لوحة التحكم — المؤشرات","مؤشرات حية ورسوم بيانية وأكثر منتجات البيع."]}},
+    {img:"assets/page_07_invoices.png",  cap:{en:["Invoices","Every invoice saved — review, reprint or return."],ar:["الفواتير","كل فاتورة محفوظة — مراجعة أو إعادة طباعة أو مرتجع."]}},
+    {img:"assets/page_10_expenses.png",  cap:{en:["Expenses","Track daily expenses and keep profits clear."],ar:["المصروفات","تابع مصروفاتك اليومية وخلي الأرباح واضحة."]}},
+    {img:"assets/page_04_parties.png",   cap:{en:["Customers & Suppliers","Debts, ledger and payments in one place."],ar:["العملاء والموردين","ديون وكشوف حسابات ومسددات في مكان واحد."]}},
+    {img:"assets/page_03_settings.png",  cap:{en:["Settings","Store info, tax, users and preferences."],ar:["الإعدادات","بيانات المحل والضرايب والمستخدمين والتفضيلات."]}},
+  ];
+  document.getElementById("shotsGrid").innerHTML = S.map(s => `
+    <div class="shot reveal">
+      <img src="${s.img}" alt="${(LANG==="ar"?s.cap.ar:s.cap.en)[0]}" loading="lazy">
+      <div class="cap"><b>${(LANG==="ar"?s.cap.ar:s.cap.en)[0]}</b>${(LANG==="ar"?s.cap.ar:s.cap.en)[1]}</div>
+    </div>`).join("");
+  observeReveals();
+}
+function priceOf(p){ const v = Math.round(p.egp * RATES[CUR]); return CUR_SYM[CUR] + " " + v.toLocaleString(); }
+function renderPlans(){
+  document.getElementById("plansGrid").innerHTML = PLANS.map(p => `
+    <div class="plan ${p.pop?"pop":""} reveal">
+      ${p.tag ? `<div class="tag">${p.tag[LANG]}</div>` : ""}
+      <h3>${p.name[LANG]}</h3>
+      <div class="price">${priceOf(p)} <small>/${p.per[LANG]}</small></div>
+      <ul>${PLAN_FEATS[LANG].map(f=>`<li>${f}</li>`).join("")}</ul>
+      <button class="btn ${p.pop?"btn-primary":"btn-ghost"}" data-buy="${p.id}" data-i18n="nav_buy">${t("nav_buy")}</button>
+    </div>`).join("");
+  document.getElementById("downloadArea").innerHTML = `
+    <a class="btn btn-primary" href="${EXE_URL}" download>
+      ${t("download")}
+    </a>
+    <span class="dls-note">${t("download_sub")}</span>`;
+  document.querySelectorAll("[data-buy]").forEach(b => b.onclick = () => openCheckout(b.dataset.buy));
+  observeReveals();
+}
+function renderFaqs(){
+  document.getElementById("faqList").innerHTML = FAQS.map((f,i) => {
+    const [q,a] = LANG==="ar" ? f.ar : f.en;
+    return `<div class="q reveal"><button onclick="this.parentElement.classList.toggle('open')">${q}<span class="chev">▾</span></button><div class="a">${a}</div></div>`;
+  }).join("");
+  observeReveals();
+}
+
+/* ============ Currency ============ */
+document.getElementById("currencyBar").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-cur]"); if(!btn) return;
+  CUR = btn.dataset.cur; localStorage.setItem("mka_cur", CUR);
+  document.querySelectorAll("#currencyBar button").forEach(b => b.classList.toggle("on", b === btn));
+  renderPlans();
+});
+(function initCur(){
+  document.querySelectorAll("#currencyBar button").forEach(b => b.classList.toggle("on", b.dataset.cur === CUR));
+})();
+
+/* ============ Checkout ============ */
+let selPlan = null, orderKey = null;
+function openCheckout(planId){
+  selPlan = PLANS.find(p => p.id === planId);
+  document.getElementById("sumPlan").textContent = `${selPlan.name[LANG]} — ${selPlan.dur[LANG]}`;
+  document.getElementById("sumPrice").textContent = priceOf(selPlan);
+  document.getElementById("checkoutForm").style.display = "block";
+  document.getElementById("licBox").classList.remove("show");
+  document.getElementById("overlay").classList.add("show");
+}
+document.getElementById("modalClose").onclick = () => document.getElementById("overlay").classList.remove("show");
+document.getElementById("overlay").addEventListener("click", e => { if(e.target.id === "overlay") document.getElementById("overlay").classList.remove("show"); });
+
+/* Order via WhatsApp: build the message and open wa.me with pre-filled text */
+function buildOrderMessage(name, shop, contact, plan){
+  const L = LANG;
+  const lines = L === "ar" ? [
+    "🛒 *طلب اشتراك MKA System*",
+    "━━━━━━━━━━━━━━",
+    `👤 الاسم: ${name}`,
+    shop ? `🏪 المحل: ${shop}` : null,
+    `📱 للتواصل: ${contact}`,
+    `📦 الخطة: ${plan.name.ar} — ${plan.dur.ar}`,
+    `💰 السعر: ${priceOf(plan)} (ج.م ${plan.egp.toLocaleString("ar-EG")})`,
+    "━━━━━━━━━━━━━━",
+    "أنا مهتم بالاشتراك — ارجو تأكيد الطلب وإرسال كود التفعيل 🙏",
+  ] : [
+    "🛒 *MKA System subscription order*",
+    "━━━━━━━━━━━━━━",
+    `👤 Name: ${name}`,
+    shop ? `🏪 Store: ${shop}` : null,
+    `📱 Contact: ${contact}`,
+    `📦 Plan: ${plan.name.en} — ${plan.dur.en}`,
+    `💰 Price: ${priceOf(plan)}`,
+    "━━━━━━━━━━━━━━",
+    "I'm interested in subscribing — please confirm my order and send the activation key 🙏",
+  ];
+  return lines.filter(Boolean).join("\n");
+}
+function openWhatsApp(text){
+  const url = `https://wa.me/${OWNER_WA}?text=${encodeURIComponent(text)}`;
+  window.open(url, "_blank", "noopener");
+}
+let lastOrder = null;
+document.getElementById("payBtn").onclick = () => {
+  const name = document.getElementById("coName").value.trim();
+  const shop = document.getElementById("coShop").value.trim();
+  const contact = document.getElementById("coContact").value.trim();
+  if(!name || !contact){ alert(LANG==="ar" ? "أدخل الاسم ورقم التواصل أولًا." : "Please enter your name and contact first."); return; }
+  lastOrder = { name, shop, contact, plan: selPlan.id };
+  const msg = buildOrderMessage(name, shop, contact, selPlan);
+  try{ localStorage.setItem("mka_last_order", JSON.stringify({...lastOrder, at:new Date().toISOString()})); }catch(e){}
+  openWhatsApp(msg);
+  document.getElementById("checkoutForm").style.display = "none";
+  document.getElementById("licKey").textContent = LANG==="ar"
+    ? `👤 ${name}${shop ? " | 🏪 " + shop : ""}\n📱 ${contact}\n📦 ${selPlan.name.ar} (${selPlan.dur.ar}) — ${priceOf(selPlan)}`
+    : `👤 ${name}${shop ? " | 🏪 " + shop : ""}\n📱 ${contact}\n📦 ${selPlan.name.en} (${selPlan.dur.en}) — ${priceOf(selPlan)}`;
+  document.getElementById("licKey").style.whiteSpace = "pre-line";
+  document.getElementById("licBox").classList.add("show");
+};
+document.getElementById("waAgain").onclick = () => {
+  if(!lastOrder) return;
+  const msg = buildOrderMessage(lastOrder.name, lastOrder.shop, lastOrder.contact, PLANS.find(p => p.id === lastOrder.plan));
+  openWhatsApp(msg);
+};
+
+/* ============ Misc ============ */
+document.getElementById("langBtn").onclick = () => { LANG = LANG === "en" ? "ar" : "en"; applyLang(); };
+document.getElementById("menuToggle").onclick = () => document.getElementById("navLinks").classList.toggle("open");
+document.querySelectorAll("#navLinks a").forEach(a => a.onclick = () => document.getElementById("navLinks").classList.remove("open"));
+
+const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }), {threshold:.12});
+function observeReveals(){ document.querySelectorAll(".reveal:not(.in)").forEach(el => io.observe(el)); }
+
+applyLang();
+</script>
+</body>
+</html>
