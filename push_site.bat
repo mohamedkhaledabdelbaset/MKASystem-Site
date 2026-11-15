@@ -1,30 +1,30 @@
 @echo off
-chcp 65001 >nul
-title MKA System - نشر الموقع
+title MKA System - Deploy Site
 cd /d "%~dp0"
 
 echo ============================================
-echo    MKA System - رفع الموقع على GitHub
+echo    MKA System - Deploy website to GitHub
 echo ============================================
 echo.
 git remote add origin https://github.com/mohamedkhaledabdelbaset/MKASystem-Site.git 2>nul
 git push -u origin main
-
 echo.
 if %ERRORLEVEL% NEQ 0 (
-    echo    فشل الرفع! الأسباب المحتملة:
-    echo    1- الريبو مش موجود بعد - أنشئه من: github.com/new
-    echo       الاسم بالظبط: MKASystem-Site   واختار: Public
-    echo    2- تسجيل الدخول اتلغى - شغّل الملف تاني وسجل دخول
-    echo    3- مسجل دخول بحساب تاني - لازم حساب mohamedkhaledabdelbaset
+    echo.
+    echo    PUSH FAILED - check these:
+    echo    1. Repo must exist first: https://github.com/new
+    echo       Name exactly: MKASystem-Site  (Public)
+    echo    2. Did you cancel the login window? Run again and login.
+    echo    3. You must login as account: mohamedkhaledabdelbaset
 ) else (
-    echo    تم الرفع بنجاح!
     echo.
-    echo    آخر خطوة - فعّل Pages:
+    echo    PUSH OK!
+    echo.
+    echo    Last step - enable Pages:
     echo    https://github.com/mohamedkhaledabdelbaset/MKASystem-Site/settings/pages
-    echo    Source: اختر GitHub Actions
+    echo    Source: choose "GitHub Actions"
     echo.
-    echo    بعد دقيقتين الموقع هيفتح على:
+    echo    Your site will be live in about 2 minutes at:
     echo    https://mohamedkhaledabdelbaset.github.io/MKASystem-Site/
 )
 echo.
