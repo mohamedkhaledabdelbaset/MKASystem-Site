@@ -4,7 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MKA System — Paint & Hardware Store Management Suite</title>
-<meta name="description" content="MKA System is a professional POS & inventory management suite for paint, hardware and building-material stores: invoicing, color mixing, warehouses, debts, reports and more.">
+<meta name="description" content="MKA System is a professional POS & inventory suite for paint, hardware and building-material stores: fast cashier, smart inventory, color mixing, warehouses, debts, invoices and reports — works offline on Windows.">
+<meta name="theme-color" content="#070b16">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MKA System — Paint & Hardware Store Management Suite">
+<meta property="og:description" content="Complete desktop POS for paint & hardware shops: cashier, inventory, color mixing, warehouses, invoices and reports. Free EXE download, Arabic/English.">
+<meta property="og:image" content="assets/page_17_dashboard.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
@@ -176,6 +182,59 @@ footer{ border-top:1px solid var(--line); margin-top:40px; padding:34px 0 44px; 
 .reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
 .reveal.in{ opacity:1; transform:none; }
 
+/* Hero showcase */
+.hero-showcase{ margin:38px auto 0; max-width:980px; position:relative; }
+.hero-showcase .frame{
+  border-radius:22px; overflow:hidden; border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.03) inset;
+  transform:perspective(1200px) rotateX(2deg);
+}
+.hero-showcase img{ width:100%; display:block; aspect-ratio:1300/820; object-fit:cover; object-position:top left; }
+.hero-showcase::before{
+  content:""; position:absolute; inset:-20% 10% auto; height:60%; z-index:-1;
+  background:radial-gradient(closest-side, rgba(249,115,22,.18), transparent 70%);
+  filter:blur(30px);
+}
+
+/* How it works */
+.steps-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; counter-reset:step; }
+.step{
+  position:relative; background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px 20px 22px 22px; overflow:hidden;
+}
+.step::before{
+  counter-increment:step; content:counter(step);
+  position:absolute; top:14px; inset-inline-end:16px; font-size:34px; font-weight:800; line-height:1;
+  background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; opacity:.22;
+}
+.step .s-ic{ font-size:22px; margin-bottom:10px; }
+.step h3{ font-size:15px; margin-bottom:6px; }
+.step p{ color:var(--muted); font-size:13.5px; line-height:1.7; }
+
+/* Lightbox */
+.lightbox{ position:fixed; inset:0; z-index:120; background:rgba(4,7,14,.88); backdrop-filter:blur(10px);
+  display:none; align-items:center; justify-content:center; padding:24px; }
+.lightbox.show{ display:flex; }
+.lightbox img{ max-width:min(1100px,96vw); max-height:86vh; border-radius:16px; border:1px solid var(--line); box-shadow:0 30px 90px rgba(0,0,0,.6); }
+.lightbox .lb-cap{ position:absolute; bottom:18px; left:50%; transform:translateX(-50%); color:#e8edf7; font-size:13.5px; background:rgba(0,0,0,.35); padding:8px 14px; border-radius:999px; border:1px solid var(--line); max-width:90vw; text-align:center; }
+.lightbox .lb-x{ position:absolute; top:16px; inset-inline-end:18px; width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.08); color:#fff; font-size:20px; cursor:pointer; }
+
+/* Floating actions */
+.fab-col{ position:fixed; bottom:22px; inset-inline-end:18px; z-index:70; display:flex; flex-direction:column; gap:10px; }
+.fab{ width:52px; height:52px; border-radius:50%; display:grid; place-items:center; cursor:pointer; border:1px solid var(--line);
+  box-shadow:0 14px 30px rgba(0,0,0,.35); transition:transform .15s ease, filter .15s; font-size:22px; color:#fff; }
+.fab:hover{ transform:translateY(-2px); filter:brightness(1.07); }
+.fab-wa{ background:linear-gradient(135deg,#16a34a,#22c55e); }
+.fab-top{ background:rgba(15,23,42,.85); backdrop-filter:blur(8px); font-size:18px; opacity:0; pointer-events:none; transform:translateY(6px); }
+.fab-top.show{ opacity:1; pointer-events:auto; transform:none; }
+
+.nav .links a.active{ color:var(--text); }
+.nav .links a.active::after{ content:""; display:block; height:2px; margin-top:4px; border-radius:2px; background:var(--grad); }
+
+.shot{ cursor:zoom-in; }
+.dl-meta{ color:var(--muted); font-size:12.5px; margin-top:6px; text-align:center; width:100%; }
+
 @media (max-width:760px){
   .nav .links{ display:none; position:absolute; top:64px; inset-inline:0; flex-direction:column;
     background:rgba(7,11,22,.97); border-bottom:1px solid var(--line); padding:18px 22px; gap:14px; }
@@ -199,6 +258,7 @@ footer{ border-top:1px solid var(--line); margin-top:40px; padding:34px 0 44px; 
     <nav class="links" id="navLinks">
       <a href="#features" data-i18n="nav_features">Features</a>
       <a href="#modules" data-i18n="nav_modules">Modules</a>
+      <a href="#how" data-i18n="nav_how">How it works</a>
       <a href="#pricing" data-i18n="nav_pricing">Pricing</a>
       <a href="#faq" data-i18n="nav_faq">FAQ</a>
       <a href="#contact" data-i18n="nav_contact">Contact</a>
@@ -224,6 +284,9 @@ footer{ border-top:1px solid var(--line); margin-top:40px; padding:34px 0 44px; 
       <div class="stat"><b>4</b><span data-i18n="stat3">UI themes</span></div>
       <div class="stat"><b>∞</b><span data-i18n="stat4">Invoices & items</span></div>
     </div>
+    <div class="hero-showcase reveal">
+      <div class="frame"><img src="assets/page_17_dashboard.png" alt="MKA System dashboard" loading="eager"></div>
+    </div>
   </div>
 </div>
 
@@ -246,6 +309,17 @@ footer{ border-top:1px solid var(--line); margin-top:40px; padding:34px 0 44px; 
       <p data-i18n="mod_sub">A glimpse of the clean, glassy interface — four themes, Arabic & English.</p>
     </div>
     <div class="shots" id="shotsGrid"></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 data-i18n-html="how_h2">Get started in <span>minutes</span></h2>
+      <p data-i18n="how_sub">From download to activation — simple and fast.</p>
+    </div>
+    <div class="steps-grid" id="stepsGrid"></div>
   </div>
 </section>
 
@@ -284,7 +358,7 @@ footer{ border-top:1px solid var(--line); margin-top:40px; padding:34px 0 44px; 
     <p data-i18n="contact_sub">Questions before buying? We reply fast.</p>
     <div class="actions" style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap">
       <a class="btn btn-primary" href="mailto:mohamedkhaledabdelbaset@gmail.com" data-i18n="contact_mail">✉ Email us</a>
-      <a class="btn btn-ghost" href="https://wa.me/201012345678" target="_blank" rel="noopener" data-i18n="contact_wa">💬 WhatsApp</a>
+      <a class="btn btn-ghost" href="https://wa.me/201016901337" target="_blank" rel="noopener" id="waContactBtn" data-i18n="contact_wa">💬 WhatsApp</a>
     </div>
   </div>
 </section>
@@ -296,6 +370,19 @@ footer{ border-top:1px solid var(--line); margin-top:40px; padding:34px 0 44px; 
     <div><a href="#pricing" data-i18n="foot_pricing">Pricing</a> · <a href="#faq" data-i18n="foot_faq">FAQ</a> · <a href="mailto:mohamedkhaledabdelbaset@gmail.com">Support</a></div>
   </div>
 </footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-x" id="lbClose" aria-label="Close">✕</button>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<!-- FLOATING ACTIONS -->
+<div class="fab-col" aria-label="Quick actions">
+  <button class="fab fab-top" id="toTop" title="Back to top">↑</button>
+  <a class="fab fab-wa" id="waFab" href="https://wa.me/201016901337" target="_blank" rel="noopener" title="WhatsApp">💬</a>
+</div>
 
 <!-- CHECKOUT MODAL -->
 <div class="overlay" id="overlay">
@@ -363,7 +450,13 @@ const FEATURES = [
   {ic:"🧾", en:["Invoices & returns","Full sales history, returns & exchange with settlement."], ar:["فواتير ومرتجعات","سجل مبيعات كامل، مرتجعات واستبدال مع تسوية."]},
   {ic:"📊", en:["Powerful reports","Sales, profits, expenses, debts, dashboard KPIs & charts."], ar:["تقارير قوية","مبيعات، أرباح، مصروفات، ديون، داشبورد ومؤشرات."]},
   {ic:"👥", en:["Customers & suppliers","Balances, statements, advances tracking."], ar:["عملاء وموردون","أرصدة، كشوف حساب، متابعة سلف."]},
-  {ic:"🔐", en:["Roles & permissions","Owner, admin, cashier — page-level permissions."], ar:["أدوار وصلاحيات","مالك، مدير، كاشير — صلاحيات على مستوى الشاشات."]},
+  {ic:"🔐", en:["Roles & permissions","Admin and cashier accounts with page-level permissions."], ar:["أدوار وصلاحيات","حساب مدير وكاشير مع صلاحيات على مستوى الشاشات."]},
+];
+const STEPS = [
+  {ic:"⬇️", en:["Download & install","Download the free EXE and install it on your Windows PC. The app runs in trial mode until activated."], ar:["حمّل وثبّت","نزّل ملف EXE المجاني وثبّته على جهاز الويندوز. البرنامج يعمل في وضع تجريبي حتى التفعيل."]},
+  {ic:"🛒", en:["Choose a plan & order","Pick a subscription duration and send your order to us on WhatsApp with your details."], ar:["اختر الخطة واطلب","حدد مدة الاشتراك وابعتلنا طلبك على واتساب ببياناتك."]},
+  {ic:"🔑", en:["Activate with your key","We reply with your activation code — paste it in the app's activation screen to unlock it."], ar:["فعّل بالكود","هنرد عليك بكود التفعيل — الصقه في شاشة التفعيل داخل البرنامج."]},
+  {ic:"🚀", en:["Sign in & start","Default sign-in is admin / admin. You can change your username and password anytime from Users Management inside the app."], ar:["سجّل وابدأ","الدخول الافتراضي: admin / admin. تقدر تغيّر اسم المستخدم وكلمة السر في أي وقت من إدارة المستخدمين داخل البرنامج."]},
 ];
 const FAQS = [
   {en:["How does the subscription work?","Choose a duration (1, 3, 6 or 12 months) and pay once — you get an activation key valid for the whole period. The app itself is one single full edition; the subscription only controls how long it stays active."],
@@ -372,6 +465,8 @@ const FAQS = [
    ar:["ماذا أحصل عليه بالضبط؟","نسخة واحدة بكل شيء: كاشير، مخزون، خلط ألوان، مخازن، فواتير، تقارير — لا توجد مميزات مقفلة حسب الخطة."]},
   {en:["Can I download the program before paying?","Yes — the full installer EXE is available as a free download on this page. It runs in trial mode until you activate with a key."],
    ar:["هل أقدر أنزّل البرنامج قبل الدفع؟","نعم — ملف التثبيت EXE الكامل متاح للتحميل المجاني من هذه الصفحة، ويعمل في وضع تجريبي حتى تفعّله بكود."]},
+  {en:["What is the default login? Can I change it?","The default sign-in is username: admin and password: admin. After signing in, open Users Management inside the app to change your username and password anytime."],
+   ar:["ما بيانات الدخول الافتراضية؟ وهل أقدر أغيّرها؟","بيانات الدخول الافتراضية: اسم المستخدم admin وكلمة السر admin. بعد الدخول افتح «إدارة المستخدمين» داخل البرنامج وغيّر الاسم وكلمة السر في أي وقت."]},
   {en:["Does it work offline?","Yes — 100% offline desktop app (Windows). No internet needed for daily work."],
    ar:["هل يعمل بدون إنترنت؟","نعم — برنامج ويندوز سطح مكتب يعمل 100% بدون إنترنت في العمل اليومي."]},
   {en:["What happens when my subscription ends?","The app goes back to trial mode — your data is safe. Renew with a new key and continue exactly where you left off."],
@@ -381,13 +476,14 @@ const FAQS = [
 /* ============ i18n ============ */
 const I18N = {
   en:{
-    nav_features:"Features", nav_modules:"Modules", nav_pricing:"Pricing", nav_faq:"FAQ", nav_contact:"Contact", nav_buy:"Buy Now",
+    nav_features:"Features", nav_modules:"Modules", nav_how:"How it works", nav_pricing:"Pricing", nav_faq:"FAQ", nav_contact:"Contact", nav_buy:"Buy Now",
     hero_pill:"Trusted by paint & hardware stores", hero_h1:"Run your store like a <span>pro</span>",
     hero_sub:"MKA System is a complete desktop suite for paint, hardware and building-material shops — fast POS, smart inventory, color mixing & cataloging, multi-warehouse, debts, advances, invoices and powerful reports.",
     hero_cta1:"Get your license", hero_cta2:"Explore modules",
     stat1:"Integrated modules", stat2:"Languages (AR/EN)", stat3:"UI themes", stat4:"Invoices & items",
     feat_h2:"Everything your <span>store</span> needs", feat_sub:"Built for the daily reality of paint & hardware retailers — offline-first, fast and reliable.",
-    mod_h2:"Inside the <span>system</span>", mod_sub:"A glimpse of the clean, glassy interface — four themes, Arabic & English.",
+    mod_h2:"Inside the <span>system</span>", mod_sub:"A glimpse of the clean, glassy interface — four themes, Arabic & English. Click any screenshot to enlarge.",
+    how_h2:"Get started in <span>minutes</span>", how_sub:"From download to activation — simple and fast.",
     price_h2:"Simple <span>subscription</span>, instant activation", price_sub:"One full edition — pick a duration and pay once. Free EXE download below.",
     faq_h2:"Questions & <span>answers</span>",
     contact_h2:"Talk to <span>us</span>", contact_sub:"Questions before buying? We reply fast.",
@@ -398,17 +494,18 @@ const I18N = {
     co_steps:"1) Your order opens in WhatsApp with all details pre-filled — just press Send.<br>2) We confirm and send you the activation key.<br>3) Paste the key into the app's activation screen — done!",
     lic_h:"✅ Order sent!", lic_sub:"We received your order on WhatsApp — we will reply shortly with your activation key.",
     lic_wa_again:"💬 Open WhatsApp again",
-    lic_note:"Tip: download the app now and install it while you wait — once we send the key, open MKA System → Activation screen → paste it (leave device ID empty for first activation).",
-    download:"⬇ Download EXE", download_sub:"Free download — runs in trial mode until activated.",
+    lic_note:"Tip: download the app now and install it while you wait. Default sign-in: <b>admin / admin</b> — you can change it anytime from Users Management inside the app.",
+    download:"⬇ Download EXE", download_sub:"Free download (~54 MB) — runs in trial mode until activated. Windows desktop.",
   },
   ar:{
-    nav_features:"المميزات", nav_modules:"الوحدات", nav_pricing:"الأسعار", nav_faq:"الأسئلة", nav_contact:"تواصل", nav_buy:"اشترِ الآن",
+    nav_features:"المميزات", nav_modules:"الوحدات", nav_how:"طريقة الاستخدام", nav_pricing:"الأسعار", nav_faq:"الأسئلة", nav_contact:"تواصل", nav_buy:"اشترِ الآن",
     hero_pill:"موثوق لدى محلات الدهانات والعدد", hero_h1:"أدر محلك <span>باحتراف</span>",
     hero_sub:"نظام MKA حزمة سطح مكتب متكاملة لمحلات الدهانات والعدد ومواد البناء — كاشير سريع، مخزون ذكي، خلط وكتالوج ألوان، مخازن متعددة، ديون وسلف، فواتير وتقارير قوية.",
     hero_cta1:"احصل على رخصتك", hero_cta2:"استكشف الوحدات",
     stat1:"وحدة متكاملة", stat2:"لغتان (عربي/إنجليزي)", stat3:"ثيمات واجهة", stat4:"فواتير وأصناف",
     feat_h2:"كل ما يحتاجه <span>محلك</span>", feat_sub:"مصمّم لواقع العمل اليومي في محلات الدهانات والعدد — يعمل أوفلاين، سريع وموثوق.",
-    mod_h2:"داخل <span>النظام</span>", mod_sub:"لمحة من الواجهة الأنيقة الزجاجية — أربعة ثيمات، عربي وإنجليزي.",
+    mod_h2:"داخل <span>النظام</span>", mod_sub:"لمحة من الواجهة الأنيقة الزجاجية — أربعة ثيمات، عربي وإنجليزي. اضغط على أي صورة لتكبيرها.",
+    how_h2:"ابدأ في <span>دقائق</span>", how_sub:"من التحميل للتفعيل — خطوات بسيطة وسريعة.",
     price_h2:"اشتراك <span>بسيط</span>، تفعيل فوري", price_sub:"نسخة واحدة كاملة — اختر المدة وادفع مرة واحدة. تحميل EXE مجاني بالأسفل.",
     faq_h2:"أسئلة <span>وأجوبة</span>",
     contact_h2:"تواصل <span>معنا</span>", contact_sub:"عندك سؤال قبل الشراء؟ نرد سريعًا.",
@@ -419,8 +516,8 @@ const I18N = {
     co_steps:"1) طلبك هيفتح في واتساب بالبيانات جاهزة — اضغط إرسال فقط.<br>2) هنأكد لك ونرد بكود التفعيل.<br>3) الصق الكود في شاشة التفعيل داخل البرنامج — خلاص!",
     lic_h:"✅ تم إرسال طلبك!", lic_sub:"وصلنا طلبك على واتساب — هنرد عليك قريب بكود التفعيل.",
     lic_wa_again:"💬 فتح واتساب مرة أخرى",
-    lic_note:"نصيحة: نزّل البرنامج الآن وثبّته وانت مستني — أول ما نبعتلك الكود افتح MKA System ← شاشة التفعيل ← الصقه (اترك معرّف الجهاز فارغًا في التفعيل الأول).",
-    download:"⬇ تحميل EXE", download_sub:"تحميل مجاني — يعمل في وضع تجريبي حتى التفعيل.",
+    lic_note:"نصيحة: نزّل البرنامج الآن وثبّته وانت مستني. بيانات الدخول الافتراضية: <b>admin / admin</b> — وتقدر تغيّرها في أي وقت من «إدارة المستخدمين» داخل البرنامج.",
+    download:"⬇ تحميل EXE", download_sub:"تحميل مجاني (~54 ميجا) — يعمل في وضع تجريبي حتى التفعيل. لسطح مكتب ويندوز.",
   }
 };
 let LANG = localStorage.getItem("mka_lang") || "en";
@@ -434,7 +531,9 @@ function applyLang(){
   document.getElementById("langBtn").textContent = LANG === "ar" ? "English" : "العربية";
   document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
   document.querySelectorAll("[data-i18n-html]").forEach(el => el.innerHTML = t(el.dataset.i18nHtml));
-  renderFeatures(); renderMocks(); renderPlans(); renderFaqs();
+  const licNote = document.querySelector('[data-i18n="lic_note"]');
+  if(licNote) licNote.innerHTML = t("lic_note");
+  renderFeatures(); renderMocks(); renderSteps(); renderPlans(); renderFaqs();
   localStorage.setItem("mka_lang", LANG);
 }
 
@@ -457,11 +556,27 @@ function renderMocks(){
     {img:"assets/page_04_parties.png",   cap:{en:["Customers & Suppliers","Debts, ledger and payments in one place."],ar:["العملاء والموردين","ديون وكشوف حسابات ومسددات في مكان واحد."]}},
     {img:"assets/page_03_settings.png",  cap:{en:["Settings","Store info, tax, users and preferences."],ar:["الإعدادات","بيانات المحل والضرايب والمستخدمين والتفضيلات."]}},
   ];
-  document.getElementById("shotsGrid").innerHTML = S.map(s => `
-    <div class="shot reveal">
-      <img src="${s.img}" alt="${(LANG==="ar"?s.cap.ar:s.cap.en)[0]}" loading="lazy">
-      <div class="cap"><b>${(LANG==="ar"?s.cap.ar:s.cap.en)[0]}</b>${(LANG==="ar"?s.cap.ar:s.cap.en)[1]}</div>
-    </div>`).join("");
+  document.getElementById("shotsGrid").innerHTML = S.map(s => {
+    const cap = LANG==="ar"?s.cap.ar:s.cap.en;
+    const title = cap[0].replace(/"/g,'&quot;');
+    return `
+    <div class="shot reveal" data-img="${s.img}" data-cap="${title}">
+      <img src="${s.img}" alt="${title}" loading="lazy">
+      <div class="cap"><b>${cap[0]}</b>${cap[1]}</div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("#shotsGrid .shot").forEach(el => {
+    el.onclick = () => openLightbox(el.dataset.img, el.dataset.cap);
+  });
+  observeReveals();
+}
+function renderSteps(){
+  const wrap = document.getElementById("stepsGrid");
+  if(!wrap) return;
+  wrap.innerHTML = STEPS.map(s => {
+    const [title, desc] = LANG === "ar" ? s.ar : s.en;
+    return `<div class="step reveal"><div class="s-ic">${s.ic}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  }).join("");
   observeReveals();
 }
 function priceOf(p){ const v = Math.round(p.egp * RATES[CUR]); return CUR_SYM[CUR] + " " + v.toLocaleString(); }
@@ -567,6 +682,21 @@ document.getElementById("waAgain").onclick = () => {
   openWhatsApp(msg);
 };
 
+/* ============ Lightbox ============ */
+function openLightbox(src, cap){
+  const lb = document.getElementById("lightbox"); if(!lb) return;
+  document.getElementById("lbImg").src = src;
+  document.getElementById("lbCap").textContent = cap || "";
+  lb.classList.add("show"); lb.setAttribute("aria-hidden","false");
+}
+function closeLightbox(){
+  const lb = document.getElementById("lightbox"); if(!lb) return;
+  lb.classList.remove("show"); lb.setAttribute("aria-hidden","true");
+}
+document.getElementById("lbClose").onclick = closeLightbox;
+document.getElementById("lightbox").addEventListener("click", e => { if(e.target.id === "lightbox") closeLightbox(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeLightbox(); });
+
 /* ============ Misc ============ */
 document.getElementById("langBtn").onclick = () => { LANG = LANG === "en" ? "ar" : "en"; applyLang(); };
 document.getElementById("menuToggle").onclick = () => document.getElementById("navLinks").classList.toggle("open");
@@ -574,6 +704,21 @@ document.querySelectorAll("#navLinks a").forEach(a => a.onclick = () => document
 
 const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }), {threshold:.12});
 function observeReveals(){ document.querySelectorAll(".reveal:not(.in)").forEach(el => io.observe(el)); }
+
+// Back to top + nav active
+const toTop = document.getElementById("toTop");
+window.addEventListener("scroll", () => {
+  if(toTop) toTop.classList.toggle("show", window.scrollY > 500);
+  const ids = ["features","modules","how","pricing","faq","contact"];
+  let cur = null;
+  ids.forEach(id => { const el = document.getElementById(id); if(el && el.getBoundingClientRect().top <= 120) cur = id; });
+  document.querySelectorAll("#navLinks a").forEach(a => a.classList.toggle("active", cur && a.getAttribute("href") === "#" + cur));
+}, { passive:true });
+if(toTop) toTop.onclick = () => window.scrollTo({top:0, behavior:"smooth"});
+
+// Ensure WA links use configured number
+const waUrl = `https://wa.me/${OWNER_WA}`;
+["waContactBtn","waFab"].forEach(id => { const el = document.getElementById(id); if(el) el.href = waUrl; });
 
 applyLang();
 </script>
