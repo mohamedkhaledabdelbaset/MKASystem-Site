@@ -691,14 +691,14 @@ const I18N = {
     auth_err_taken:"This username is already taken. Try another one.", auth_err_login:"Wrong username or password.",
     auth_err_confirm:"Account created but needs email confirmation — contact us.", auth_err_generic:"Something went wrong. Try again.",
     acc_hello:"Welcome", acc_status_active:"Active", acc_status_pending:"Pending activation", acc_status_expired:"Expired",
-    acc_username:"Username", acc_contact:"Contact", acc_plan:"Plan", acc_expires:"Expires",
+    acc_username:"Username", acc_contact:"Contact", acc_plan:"Plan", acc_expires:"Expires", acc_subcode:"Subscription Code",
     acc_your_code:"Your activation code", acc_copy:"📋 Copy code", acc_copied:"Copied!",
     acc_pending_sub:"Your account is waiting for activation. Send us your details on WhatsApp and we will activate it and send your code.",
     acc_wa:"💬 Send details on WhatsApp", acc_change_pass:"Change password", acc_new_pass:"New password",
     acc_new_pass2:"Confirm new password", acc_save_pass:"Save new password", acc_pass_ok:"Password changed successfully.", acc_logout:"Sign out",
     admin_h:"Admin panel — customers", admin_sub:"Set the activation code and plan for each customer. They will see it when they sign in.",
     admin_refresh:"Refresh", admin_loading:"Loading customers…", admin_empty:"No customers yet.", admin_saved:"Saved ✓",
-    admin_badge:"ADMIN", admin_wa:"WhatsApp", admin_code_ph:"Activation code", admin_plan_ph:"Plan (e.g. 12 months)", admin_save:"Save",
+    admin_badge:"ADMIN", admin_wa:"WhatsApp", admin_code_ph:"Activation code", admin_plan_ph:"Plan (e.g. 12 months)", admin_subcode_ph:"Subscription code", admin_save:"Save",
     admin_wa_msg:"Hello {name}, regarding your MKA System subscription activation…",
     code_h:"Have an activation code?", code_sub:"Paste it here to verify it before using it in the app.", code_check:"Verify",
     code_empty:"Enter a code first.", code_checking:"Checking…", code_valid:"✅ Valid code", code_invalid:"❌ Invalid or inactive code.",
@@ -737,14 +737,14 @@ const I18N = {
     auth_err_taken:"اسم المستخدم محجوز. جرّب اسم تاني.", auth_err_login:"اسم المستخدم أو كلمة السر غلط.",
     auth_err_confirm:"تم إنشاء الحساب لكن يحتاج تأكيد إيميل — تواصل معنا.", auth_err_generic:"حصل خطأ. جرّب تاني.",
     acc_hello:"أهلًا", acc_status_active:"مفعّل", acc_status_pending:"بانتظار التفعيل", acc_status_expired:"منتهي",
-    acc_username:"اسم المستخدم", acc_contact:"التواصل", acc_plan:"الخطة", acc_expires:"ينتهي في",
+    acc_username:"اسم المستخدم", acc_contact:"التواصل", acc_plan:"الخطة", acc_expires:"ينتهي في", acc_subcode:"كود الاشتراك",
     acc_your_code:"كود التفعيل الخاص بك", acc_copy:"📋 نسخ الكود", acc_copied:"تم النسخ!",
     acc_pending_sub:"حسابك بانتظار التفعيل. ابعتلنا بياناتك على واتساب وهنفعّله ونبعتلك الكود.",
     acc_wa:"💬 إرسال البيانات على واتساب", acc_change_pass:"تغيير كلمة السر", acc_new_pass:"كلمة السر الجديدة",
     acc_new_pass2:"تأكيد كلمة السر الجديدة", acc_save_pass:"حفظ كلمة السر", acc_pass_ok:"تم تغيير كلمة السر بنجاح.", acc_logout:"تسجيل الخروج",
     admin_h:"لوحة الإدارة — العملاء", admin_sub:"حدد كود التفعيل والخطة لكل عميل. هيشوفها أول ما يسجّل دخول.",
     admin_refresh:"تحديث", admin_loading:"جاري تحميل العملاء…", admin_empty:"لا يوجد عملاء بعد.", admin_saved:"تم الحفظ ✓",
-    admin_badge:"أدمن", admin_wa:"واتساب", admin_code_ph:"كود التفعيل", admin_plan_ph:"الخطة (مثلاً 12 شهر)", admin_save:"حفظ",
+    admin_badge:"أدمن", admin_wa:"واتساب", admin_code_ph:"كود التفعيل", admin_plan_ph:"الخطة (مثلاً 12 شهر)", admin_subcode_ph:"كود الاشتراك", admin_save:"حفظ",
     admin_wa_msg:"مرحبًا {name}، بخصوص تفعيل اشتراكك في MKA System…",
     code_h:"عندك كود تفعيل؟", code_sub:"الصقه هنا للتأكد منه قبل استخدامه في البرنامج.", code_check:"تحقق",
     code_empty:"اكتب الكود الأول.", code_checking:"جاري التحقق…", code_valid:"✅ كود صحيح", code_invalid:"❌ كود غير صحيح أو غير مفعّل.",
@@ -983,7 +983,7 @@ async function refreshAuthData(){
   const p = await sb.from("profiles").select("id,username,full_name,contact,is_admin").eq("id", currentUser.id).maybeSingle();
   currentProfile = p.data || { id: currentUser.id, username: (currentUser.email || "").split("@")[0], full_name: "", contact: "", is_admin: false };
   isAdmin = !!currentProfile.is_admin;
-  const a = await sb.from("activations").select("code,plan,expires,status,activated_at").eq("user_id", currentUser.id).maybeSingle();
+  const a = await sb.from("activations").select("code,plan,expires,status,activated_at,sub_code").eq("user_id", currentUser.id).maybeSingle();
   currentActivation = a.data || null;
   if(isAdmin) await loadAdmin();
   renderAuth();
@@ -1016,6 +1016,7 @@ function renderAuth(){
   if(currentProfile && currentProfile.contact) rows.push(`<span>${t("acc_contact")}: <b dir="ltr">${escHtml(currentProfile.contact)}</b></span>`);
   if(currentActivation && currentActivation.plan) rows.push(`<span>${t("acc_plan")}: <b dir="auto">${escHtml(currentActivation.plan)}</b></span>`);
   if(currentActivation && currentActivation.expires) rows.push(`<span>${t("acc_expires")}: <b dir="ltr">${escHtml(currentActivation.expires)}</b></span>`);
+  if(currentActivation && currentActivation.sub_code) rows.push(`<span style="margin-top:6px">${t("acc_subcode")}: <b dir="ltr" style="font-size:13px">${escHtml(currentActivation.sub_code)}</b></span>`);
   byId("accRows").innerHTML = rows.join("");
 
   byId("accCodeWrap").style.display = active ? "block" : "none";
@@ -1035,7 +1036,7 @@ async function loadAdmin(){
   const list = byId("adminList");
   if(list) list.innerHTML = `<div class="auth-msg">${t("admin_loading")}</div>`;
   const { data, error } = await sb.from("profiles")
-    .select("id,username,full_name,contact,is_admin,created_at,activations(code,plan,expires,status)")
+    .select("id,username,full_name,contact,is_admin,created_at,activations(code,plan,expires,status,sub_code)")
     .order("created_at", { ascending: false });
   if(error){ adminUsers = []; showMsg(byId("adminMsg"), error.message, false); }
   else { adminUsers = data || []; showMsg(byId("adminMsg"), ""); }
@@ -1069,6 +1070,9 @@ function renderAdminList(){
           <input class="a-plan" placeholder="${escHtml(t("admin_plan_ph"))}" value="${escHtml(a && a.plan || "")}">
           <input class="a-exp" type="date" value="${escHtml(a && a.expires || "")}">
         </div>
+        <div class="fields">
+          <input class="a-sub" placeholder="${escHtml(t("admin_subcode_ph"))}" value="${escHtml(a && (a.sub_code || "") || "")}" dir="ltr" data-sub="1">
+        </div>
         <div class="fields" style="grid-template-columns:1fr auto">
           <select class="a-status">
             <option value="pending"${st === "pending" ? " selected" : ""}>pending</option>
@@ -1089,14 +1093,15 @@ async function saveActivation(uid){
   const plan = row.querySelector(".a-plan").value.trim();
   const expires = row.querySelector(".a-exp").value || null;
   const status = row.querySelector(".a-status").value;
+  const subCode = row.querySelector(".a-sub").value.trim() || null;
   const btn = row.querySelector(".a-save"); btn.disabled = true;
-  const payload = { user_id: uid, code: code || null, plan: plan || null, expires, status, updated_at: new Date().toISOString() };
+  const payload = { user_id: uid, code: code || null, plan: plan || null, expires, status, sub_code: subCode, updated_at: new Date().toISOString() };
   if(status === "active") payload.activated_at = new Date().toISOString();
   const { error } = await sb.from("activations").upsert(payload, { onConflict: "user_id" });
   btn.disabled = false;
   if(error) return showMsg(byId("adminMsg"), error.message, false);
   const u = adminUsers.find(x => x.id === uid);
-  if(u) u.activations = [{ code: code || null, plan: plan || null, expires, status }];
+  if(u) u.activations = [{ code: code || null, plan: plan || null, expires, status, sub_code: subCode }];
   showMsg(byId("adminMsg"), t("admin_saved"), true);
   renderAdminList();
 }
