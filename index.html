@@ -579,7 +579,7 @@ input::placeholder, textarea::placeholder{ color:#8aa4b5; opacity:1; }
           <a class="btn btn-primary" href="downloads/MKASystem.exe" download data-i18n="download">⬇ Download EXE</a>
         </div>
       </div>
-      <!-- كود التعريف (Defining Code) - يخزّن في العمود contact الموجود -->
+      <!-- كود التعريف (Defining Code) - يكتبه العميل ويظهر للأونر -->
       <div class="acc-rows" style="margin-top:10px;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
         <span style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--muted);">كود التعريف (Defining Code)</span>
         <div style="display:flex;gap:6px">
@@ -588,29 +588,25 @@ input::placeholder, textarea::placeholder{ color:#8aa4b5; opacity:1; }
         </div>
         <div class="auth-msg" id="definingCodeMsg" style="margin-top:4px;font-size:11px"></div>
       </div>
-      <!-- مدة الاشتراك + السعر (نظام الخطط الحالي في الموقع) -->
-      <div class="acc-rows" style="margin-top:10px;padding:8px 0;border-bottom:1px solid var(--line);">
+      <!-- مدة الاشتراك (العميل يختارها، الأونر لا يراها) -->
+      <div class="acc-rows" style="padding:8px 0;border-bottom:1px solid var(--line);">
         <span style="display:block;font-size:12px;font-weight:700;margin-bottom:8px;color:var(--muted);">مدة الاشتراك (Subscription Duration)</span>
         <div id="subPlanGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
-          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="m1">
-            <h3 style="font-size:13px;margin:0 0 4px 0">M1</h3>
-            <div class="price" style="font-size:16px;margin:6px 0"><b id="p1">300</b><small>ج.م</small></div>
-            <small style="color:var(--muted)">شهريًا</small>
+          <div class="plan reveal" style="padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;cursor:pointer" data-plan="m1">
+            <h3 style="font-size:13px;margin:0 0 4px 0">M1 - شهري</h3>
+            <div class="price" style="font-size:18px;margin:4px 0"><b>٣٠٠</b><small>ج.م/شهر</small></div>
           </div>
-          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="m3">
-            <h3 style="font-size:13px;margin:0 0 4px 0">M3</h3>
-            <div class="price" style="font-size:16px;margin:6px 0"><b id="p3">800</b><small>ج.م</small></div>
-            <small style="color:var(--muted)">٣ شهور</small>
+          <div class="plan reveal" style="padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;cursor:pointer" data-plan="m3">
+            <h3 style="font-size:13px;margin:0 0 4px 0">M3 - ٣ شهور</h3>
+            <div class="price" style="font-size:18px;margin:4px 0"><b>٨٠٠</b><small>ج.م/٣ شهر</small></div>
           </div>
-          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="m6">
-            <h3 style="font-size:13px;margin:0 0 4px 0">M6</h3>
-            <div class="price" style="font-size:16px;margin:6px 0"><b id="p6">1600</b><small>ج.م</small></div>
-            <small style="color:var(--muted)">٦ شهور</small>
+          <div class="plan reveal" style="padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;cursor:pointer" data-plan="m6">
+            <h3 style="font-size:13px;margin:0 0 4px 0">M6 - ٦ شهور</h3>
+            <div class="price" style="font-size:18px;margin:4px 0"><b>١٦٠٠</b><small>ج.م/٦ شهر</small></div>
           </div>
-          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="y1">
-            <h3 style="font-size:13px;margin:0 0 4px 0">Y1</h3>
-            <div class="price" style="font-size:16px;margin:6px 0"><b id="p1_1">3000</b><small>ج.م</small></div>
-            <small style="color:var(--muted)">سنة كاملة</small>
+          <div class="plan reveal" style="padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;cursor:pointer" data-plan="y1">
+            <h3 style="font-size:13px;margin:0 0 4px 0">Y1 - سنة كاملة</h3>
+            <div class="price" style="font-size:18px;margin:4px 0"><b>٣٠٠٠</b><small>ج.م/سنة</small></div>
           </div>
         </div>
         <div class="auth-msg" id="subPlanMsg" style="margin-top:6px;font-size:11px"></div>
@@ -1112,7 +1108,7 @@ function renderAdminList(){
           <div class="who" dir="ltr">${escHtml(contact || "—")}</div>
           <div style="display:flex;gap:6px">${wa}</div>
         </div>
-        ${u.contact ? `<div class="st-line"><div class="who" dir="ltr" style="font-size:11px;color:#54748a">كود التعريف: <b dir="ltr" style="color:var(--text);font-size:12px">${escHtml(parseContact(u.contact).definingCode)}${parseContact(u.contact).plan ? ` | مدة: <b dir="ltr" style="font-size:12px">${escHtml(parseContact(u.contact).plan)}</b>` : ""}</b></div></div>` : ""}
+        ${u.contact ? `<div class="st-line"><div class="who" dir="ltr" style="font-size:11px;color:#54748a">كود التعريف: <b dir="ltr" style="color:var(--text);font-size:12px">${escHtml(parseContact(u.contact).definingCode)}</b></div></div>` : ""}
         <div class="fields">
           <input class="a-code" placeholder="${escHtml(t("admin_code_ph"))}" value="${escHtml(a && a.code || "")}" dir="ltr">
           <input class="a-plan" placeholder="${escHtml(t("admin_plan_ph"))}" value="${escHtml(a && a.plan || "")}">
@@ -1278,9 +1274,8 @@ byId("saveDefiningCodeBtn").onclick = async () => {
   const input = byId("definingCodeInput");
   const msg = byId("definingCodeMsg");
   const defCode = input.value.trim();
-  const planId = getSelectedPlan();
-  const planName = planId ? PLANS.find(p => p.id === planId)?.dur?.ar || planId : "";
-  const combined = [defCode, planName].filter(Boolean).join("|");
+  const planId = getSelectedPlan(); // "m1", "m3", "m6", "y1"
+  const combined = [defCode, planId].filter(Boolean).join("|");
   const btn = byId("saveDefiningCodeBtn"); btn.disabled = true;
   let error = null;
   try {
