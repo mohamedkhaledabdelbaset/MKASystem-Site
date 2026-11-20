@@ -579,7 +579,7 @@ input::placeholder, textarea::placeholder{ color:#8aa4b5; opacity:1; }
           <a class="btn btn-primary" href="downloads/MKASystem.exe" download data-i18n="download">⬇ Download EXE</a>
         </div>
       </div>
-      <!-- كود التعريف (Defining Code) - يكتبه العميل ويظهر للأونر -->
+      <!-- كود التعريف (Defining Code) - يخزّن في العمود contact الموجود -->
       <div class="acc-rows" style="margin-top:10px;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
         <span style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--muted);">كود التعريف (Defining Code)</span>
         <div style="display:flex;gap:6px">
@@ -587,6 +587,33 @@ input::placeholder, textarea::placeholder{ color:#8aa4b5; opacity:1; }
           <button class="btn btn-ghost" id="saveDefiningCodeBtn" style="padding:8px 12px;font-size:11px">💾 حفظ</button>
         </div>
         <div class="auth-msg" id="definingCodeMsg" style="margin-top:4px;font-size:11px"></div>
+      </div>
+      <!-- مدة الاشتراك + السعر (نظام الخطط الحالي في الموقع) -->
+      <div class="acc-rows" style="margin-top:10px;padding:8px 0;border-bottom:1px solid var(--line);">
+        <span style="display:block;font-size:12px;font-weight:700;margin-bottom:8px;color:var(--muted);">مدة الاشتراك (Subscription Duration)</span>
+        <div id="subPlanGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
+          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="m1">
+            <h3 style="font-size:13px;margin:0 0 4px 0">M1</h3>
+            <div class="price" style="font-size:16px;margin:6px 0"><b id="p1">300</b><small>ج.م</small></div>
+            <small style="color:var(--muted)">شهريًا</small>
+          </div>
+          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="m3">
+            <h3 style="font-size:13px;margin:0 0 4px 0">M3</h3>
+            <div class="price" style="font-size:16px;margin:6px 0"><b id="p3">800</b><small>ج.م</small></div>
+            <small style="color:var(--muted)">٣ شهور</small>
+          </div>
+          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="m6">
+            <h3 style="font-size:13px;margin:0 0 4px 0">M6</h3>
+            <div class="price" style="font-size:16px;margin:6px 0"><b id="p6">1600</b><small>ج.م</small></div>
+            <small style="color:var(--muted)">٦ شهور</small>
+          </div>
+          <div class="plan reveal" style="cursor:pointer;padding:10px;border:2px solid var(--line);transition:all .2s;background:var(--card);border-radius:12px;" data-plan="y1">
+            <h3 style="font-size:13px;margin:0 0 4px 0">Y1</h3>
+            <div class="price" style="font-size:16px;margin:6px 0"><b id="p1_1">3000</b><small>ج.م</small></div>
+            <small style="color:var(--muted)">سنة كاملة</small>
+          </div>
+        </div>
+        <div class="auth-msg" id="subPlanMsg" style="margin-top:6px;font-size:11px"></div>
       </div>
       <div id="accPending" style="display:none">
         <p class="m-sub" data-i18n="acc_pending_sub">Your account is waiting for activation. Send us your details on WhatsApp and we will activate it and send your code.</p>
@@ -1085,7 +1112,7 @@ function renderAdminList(){
           <div class="who" dir="ltr">${escHtml(contact || "—")}</div>
           <div style="display:flex;gap:6px">${wa}</div>
         </div>
-        ${u.contact ? `<div class="st-line"><div class="who" dir="ltr" style="font-size:11px;color:#54748a">كود التعريف: <b dir="ltr" style="color:var(--text);font-size:12px">${escHtml(u.contact)}</b></div></div>` : ""}
+        ${u.contact ? `<div class="st-line"><div class="who" dir="ltr" style="font-size:11px;color:#54748a">كود التعريف: <b dir="ltr" style="color:var(--text);font-size:12px">${escHtml(parseContact(u.contact).definingCode)}${parseContact(u.contact).plan ? ` | مدة: <b dir="ltr" style="font-size:12px">${escHtml(parseContact(u.contact).plan)}</b>` : ""}</b></div></div>` : ""}
         <div class="fields">
           <input class="a-code" placeholder="${escHtml(t("admin_code_ph"))}" value="${escHtml(a && a.code || "")}" dir="ltr">
           <input class="a-plan" placeholder="${escHtml(t("admin_plan_ph"))}" value="${escHtml(a && a.plan || "")}">
@@ -1211,25 +1238,51 @@ byId("copyCodeBtn").onclick = async () => {
   setTimeout(() => { b.textContent = t("acc_copy"); }, 1600);
 };
 
-// كود التعريف - تحميل القيمة (من contact) والحفظ
+// كود التعريف + مدة الاشتراك - تحميل + حفظ
+function parseContact(v){
+  const parts = String(v || "").split("|");
+  return { definingCode: parts[0] || "", plan: parts[1] || "" };
+}
 function renderDefiningCode(){
   if(!currentProfile){
     byId("definingCodeInput").value = "";
-    byId("definingCodeMsg").textContent = "";
+    byId("subPlanMsg").textContent = "";
   } else {
-    byId("definingCodeInput").value = currentProfile.contact || "";
+    const parsed = parseContact(currentProfile.contact || "");
+    byId("definingCodeInput").value = parsed.definingCode;
+    selectPlanCard(parsed.plan);
   }
 }
+function selectPlanCard(planId){
+  document.querySelectorAll("#subPlanGrid .plan").forEach(c => {
+    const isSel = c.dataset.plan === planId;
+    c.style.borderColor = isSel ? "#0ea5e9" : "rgba(12,74,110,.12)";
+    c.style.background = isSel ? "linear-gradient(180deg,rgba(224,247,255,.8),rgba(255,255,255,.5))" : "var(--card)";
+    c.style.boxShadow = isSel ? "0 0 0 3px rgba(14,165,233,.15)" : "none";
+  });
+  byId("subPlanMsg").textContent = "";
+}
+function getSelectedPlan(){
+  const sel = document.querySelector("#subPlanGrid .plan.on");
+  return sel ? sel.dataset.plan : "";
+}
+byId("subPlanGrid").addEventListener("click", e => {
+  const card = e.target.closest(".plan[data-plan]");
+  if(!card) return;
+  document.querySelectorAll("#subPlanGrid .plan").forEach(c => c.classList.toggle("on", c === card));
+  selectPlanCard(card.dataset.plan);
+});
 byId("saveDefiningCodeBtn").onclick = async () => {
   const input = byId("definingCodeInput");
   const msg = byId("definingCodeMsg");
-  const val = input.value.trim();
-  if(!val){ msg.textContent = "اكتب كود التعريف أولاً"; msg.style.color = "var(--muted)"; return; }
-  if(!sb){ msg.textContent = "الرجاء تسجيل الدخول أولاً"; return; }
+  const defCode = input.value.trim();
+  const planId = getSelectedPlan();
+  const planName = planId ? PLANS.find(p => p.id === planId)?.dur?.ar || planId : "";
+  const combined = [defCode, planName].filter(Boolean).join("|");
   const btn = byId("saveDefiningCodeBtn"); btn.disabled = true;
   let error = null;
   try {
-    const r = await sb.from("profiles").update({ contact: val }, { eq: "id", value: currentUser.id });
+    const r = await sb.from("profiles").update({ contact: combined }, { eq: "id", value: currentUser.id });
     error = r.error || null;
   } catch(e){ error = e; }
   btn.disabled = false;
@@ -1237,11 +1290,12 @@ byId("saveDefiningCodeBtn").onclick = async () => {
     msg.textContent = "فشل الحفظ: " + (error.message || "");
     msg.style.color = "#dc2626";
   } else {
-    currentProfile.contact = val;
+    currentProfile.contact = combined;
     renderAdminList();
-    msg.textContent = "✓ تم الحفظ"; msg.style.color = "#047857";
+    msg.textContent = "✓ تم الحفظ (كود الاشتراك + مدة)"; msg.style.color = "#047857";
   }
 };
+byId("definingCodeInput").addEventListener("keydown", e => { if(e.key === "Enter") byId("saveDefiningCodeBtn").click(); });
 byId("definingCodeInput").addEventListener("keydown", e => { if(e.key === "Enter") byId("saveDefiningCodeBtn").click(); });
 
 byId("codeCheckBtn").onclick = async () => {
