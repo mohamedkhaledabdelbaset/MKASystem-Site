@@ -552,6 +552,9 @@ input::placeholder, textarea::placeholder{ color:#8aa4b5; opacity:1; }
         <input id="rgUser" type="text" autocomplete="username" dir="ltr" placeholder="ahmed_paint">
         <label data-i18n="auth_contact">WhatsApp number</label>
         <input id="rgContact" type="tel" autocomplete="tel" dir="ltr" placeholder="2010...">
+        <label style="margin-top:10px">كود التعريف (Defining Code)</label>
+        <input id="rgDefining" type="text" dir="ltr" placeholder="MKA-DC-..." style="margin-bottom:6px">
+        <div class="note" style="font-size:10px;margin-top:4px">(الكود الظاهر لك فالبرنامج — يظهر للأونر) كود المستخدم: كود الجهاز الخاص بك</div>
         <label data-i18n="auth_password">Password</label>
         <input id="rgPass" type="password" autocomplete="new-password" dir="ltr">
         <label data-i18n="auth_password2">Confirm password</label>
@@ -575,6 +578,15 @@ input::placeholder, textarea::placeholder{ color:#8aa4b5; opacity:1; }
           <button class="btn btn-ghost" id="copyCodeBtn" data-i18n="acc_copy">📋 Copy code</button>
           <a class="btn btn-primary" href="downloads/MKASystem.exe" download data-i18n="download">⬇ Download EXE</a>
         </div>
+      </div>
+      <!-- كود التعريف (Defining Code) - يكتبه العميل ويظهر للأونر -->
+      <div class="acc-rows" style="margin-top:10px;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+        <span style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--muted);">كود التعريف (Defining Code)</span>
+        <div style="display:flex;gap:6px">
+          <input id="definingCodeInput" type="text" dir="ltr" placeholder="MKA-DC-..." style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(12,74,110,.16);background:rgba(255,255,255,.78);color:var(--text);font-size:12px;">
+          <button class="btn btn-ghost" id="saveDefiningCodeBtn" style="padding:8px 12px;font-size:11px">💾 حفظ</button>
+        </div>
+        <div class="auth-msg" id="definingCodeMsg" style="margin-top:4px;font-size:11px"></div>
       </div>
       <div id="accPending" style="display:none">
         <p class="m-sub" data-i18n="acc_pending_sub">Your account is waiting for activation. Send us your details on WhatsApp and we will activate it and send your code.</p>
@@ -980,10 +992,14 @@ function showAuthPane(which){
 
 async function refreshAuthData(){
   if(!currentUser || !sb) return;
-  const p = await sb.from("profiles").select("id,username,full_name,contact,is_admin").eq("id", currentUser.id).maybeSingle();
-  currentProfile = p.data || { id: currentUser.id, username: (currentUser.email || "").split("@")[0], full_name: "", contact: "", is_admin: false };
+  let p = null;
+  try { p = await sb.from("profiles").select("id,username,full_name,contact,is_admin,defining_code").eq("id", currentUser.id).maybeSingle(); }
+  catch(e){ p = null; }
+  if(!p || p.error) p = await sb.from("profiles").select("id,username,full_name,contact,is_admin").eq("id", currentUser.id).maybeSingle();
+  currentProfile = p.data || { id: currentUser.id, username: (currentUser.email || "").split("@")[0], full_name: "", contact: "", is_admin: false, defining_code: "" };
   isAdmin = !!currentProfile.is_admin;
-  const a = await sb.from("activations").select("code,plan,expires,status,activated_at,sub_code").eq("user_id", currentUser.id).maybeSingle();
+  let a = null;
+  a = await sb.from("activations").select("code,plan,expires,status,activated_at").eq("user_id", currentUser.id).maybeSingle();
   currentActivation = a.data || null;
   if(isAdmin) await loadAdmin();
   renderAuth();
@@ -1016,9 +1032,7 @@ function renderAuth(){
   if(currentProfile && currentProfile.contact) rows.push(`<span>${t("acc_contact")}: <b dir="ltr">${escHtml(currentProfile.contact)}</b></span>`);
   if(currentActivation && currentActivation.plan) rows.push(`<span>${t("acc_plan")}: <b dir="auto">${escHtml(currentActivation.plan)}</b></span>`);
   if(currentActivation && currentActivation.expires) rows.push(`<span>${t("acc_expires")}: <b dir="ltr">${escHtml(currentActivation.expires)}</b></span>`);
-  if(currentActivation && currentActivation.sub_code) rows.push(`<span style="margin-top:6px">${t("acc_subcode")}: <b dir="ltr" style="font-size:13px">${escHtml(currentActivation.sub_code)}</b></span>`);
   byId("accRows").innerHTML = rows.join("");
-
   byId("accCodeWrap").style.display = active ? "block" : "none";
   byId("accCode").textContent = active ? currentActivation.code : "—";
   byId("accPending").style.display = (!isAdmin && !active) ? "block" : "none";
@@ -1029,17 +1043,23 @@ function renderAuth(){
   byId("accWaBtn").href = `https://wa.me/${OWNER_WA}?text=${encodeURIComponent(waMsg)}`;
 
   if(isAdmin) renderAdminList();
+  renderDefiningCode();
 }
 
 async function loadAdmin(){
   if(!isAdmin || !sb) return;
   const list = byId("adminList");
   if(list) list.innerHTML = `<div class="auth-msg">${t("admin_loading")}</div>`;
-  const { data, error } = await sb.from("profiles")
-    .select("id,username,full_name,contact,is_admin,created_at,activations(code,plan,expires,status,sub_code)")
-    .order("created_at", { ascending: false });
-  if(error){ adminUsers = []; showMsg(byId("adminMsg"), error.message, false); }
-  else { adminUsers = data || []; showMsg(byId("adminMsg"), ""); }
+  let data = [], err = null;
+  try {
+    const r = await sb.from("profiles")
+      .select("id,username,full_name,contact,is_admin,created_at,activations(code,plan,expires,status)")
+      .order("created_at", { ascending: false });
+    err = r.error || null;
+    data = r.data || [];
+  } catch(e){ err = e; }
+  adminUsers = data;
+  showMsg(byId("adminMsg"), err ? String(err.message || err) : "", false);
   renderAdminList();
 }
 
@@ -1065,13 +1085,11 @@ function renderAdminList(){
           <div class="who" dir="ltr">${escHtml(contact || "—")}</div>
           <div style="display:flex;gap:6px">${wa}</div>
         </div>
+        ${u.contact ? `<div class="st-line"><div class="who" dir="ltr" style="font-size:11px;color:#54748a">كود التعريف: <b dir="ltr" style="color:var(--text);font-size:12px">${escHtml(u.contact)}</b></div></div>` : ""}
         <div class="fields">
           <input class="a-code" placeholder="${escHtml(t("admin_code_ph"))}" value="${escHtml(a && a.code || "")}" dir="ltr">
           <input class="a-plan" placeholder="${escHtml(t("admin_plan_ph"))}" value="${escHtml(a && a.plan || "")}">
           <input class="a-exp" type="date" value="${escHtml(a && a.expires || "")}">
-        </div>
-        <div class="fields">
-          <input class="a-sub" placeholder="${escHtml(t("admin_subcode_ph"))}" value="${escHtml(a && (a.sub_code || "") || "")}" dir="ltr" data-sub="1">
         </div>
         <div class="fields" style="grid-template-columns:1fr auto">
           <select class="a-status">
@@ -1093,15 +1111,14 @@ async function saveActivation(uid){
   const plan = row.querySelector(".a-plan").value.trim();
   const expires = row.querySelector(".a-exp").value || null;
   const status = row.querySelector(".a-status").value;
-  const subCode = row.querySelector(".a-sub").value.trim() || null;
   const btn = row.querySelector(".a-save"); btn.disabled = true;
-  const payload = { user_id: uid, code: code || null, plan: plan || null, expires, status, sub_code: subCode, updated_at: new Date().toISOString() };
+  const payload = { user_id: uid, code: code || null, plan: plan || null, expires, status, updated_at: new Date().toISOString() };
   if(status === "active") payload.activated_at = new Date().toISOString();
   const { error } = await sb.from("activations").upsert(payload, { onConflict: "user_id" });
   btn.disabled = false;
   if(error) return showMsg(byId("adminMsg"), error.message, false);
   const u = adminUsers.find(x => x.id === uid);
-  if(u) u.activations = [{ code: code || null, plan: plan || null, expires, status, sub_code: subCode }];
+  if(u) u.activations = [{ code: code || null, plan: plan || null, expires, status }];
   showMsg(byId("adminMsg"), t("admin_saved"), true);
   renderAdminList();
 }
@@ -1119,9 +1136,10 @@ byId("registerBtn").onclick = async () => {
   if(!sb) return;
   const full = byId("rgName").value.trim();
   const user = normUser(byId("rgUser").value);
-  const contact = byId("rgContact").value.trim();
   const p1 = byId("rgPass").value, p2 = byId("rgPass2").value;
   const msg = byId("regMsg");
+  const definingCode = byId("rgDefining").value.trim();
+  const contact = definingCode ? definingCode : byId("rgContact").value.trim();
   if(!full || !user || !contact || !p1) return showMsg(msg, t("auth_err_fields"), false);
   if(!/^[a-z0-9_.]{3,24}$/.test(user)) return showMsg(msg, t("auth_err_user"), false);
   if(p1.length < 6) return showMsg(msg, t("auth_err_pass"), false);
@@ -1192,6 +1210,39 @@ byId("copyCodeBtn").onclick = async () => {
   b.textContent = t("acc_copied");
   setTimeout(() => { b.textContent = t("acc_copy"); }, 1600);
 };
+
+// كود التعريف - تحميل القيمة (من contact) والحفظ
+function renderDefiningCode(){
+  if(!currentProfile){
+    byId("definingCodeInput").value = "";
+    byId("definingCodeMsg").textContent = "";
+  } else {
+    byId("definingCodeInput").value = currentProfile.contact || "";
+  }
+}
+byId("saveDefiningCodeBtn").onclick = async () => {
+  const input = byId("definingCodeInput");
+  const msg = byId("definingCodeMsg");
+  const val = input.value.trim();
+  if(!val){ msg.textContent = "اكتب كود التعريف أولاً"; msg.style.color = "var(--muted)"; return; }
+  if(!sb){ msg.textContent = "الرجاء تسجيل الدخول أولاً"; return; }
+  const btn = byId("saveDefiningCodeBtn"); btn.disabled = true;
+  let error = null;
+  try {
+    const r = await sb.from("profiles").update({ contact: val }, { eq: "id", value: currentUser.id });
+    error = r.error || null;
+  } catch(e){ error = e; }
+  btn.disabled = false;
+  if(error){
+    msg.textContent = "فشل الحفظ: " + (error.message || "");
+    msg.style.color = "#dc2626";
+  } else {
+    currentProfile.contact = val;
+    renderAdminList();
+    msg.textContent = "✓ تم الحفظ"; msg.style.color = "#047857";
+  }
+};
+byId("definingCodeInput").addEventListener("keydown", e => { if(e.key === "Enter") byId("saveDefiningCodeBtn").click(); });
 
 byId("codeCheckBtn").onclick = async () => {
   if(!sb) return;
